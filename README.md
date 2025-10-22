@@ -1,4 +1,60 @@
-# README.md — RealEstate App Prototype
+# 🎓 Explication Markdown : Code blocks vs Contenu
+
+**Excellent question !** Tu viens de découvrir un piège courant du Markdown. 🎯
+
+---
+
+## 📘 Les balises ``` en Markdown
+
+### **Rôle des triple backticks (```)**
+
+Les ``` servent à afficher **du CODE** (pas du contenu normal).
+
+**Exemple :**
+
+````markdown
+Voici comment installer :
+
+```bash
+npm install
+git clone https://...
+```
+````
+
+**Résultat sur GitHub :**
+> Voici comment installer :
+> 
+> ```bash
+> npm install
+> git clone https://...
+> ```
+
+**→ Le texte entre ``` s'affiche avec coloration syntaxique, fond gris, police monospace.**
+
+---
+
+## 🐛 Ton problème actuel
+
+**Quand je t'ai donné le README.md, j'ai fait UNE GROSSE ERREUR :**
+
+J'ai mis **TOUT LE CONTENU** dans un bloc ````markdown ... ````, comme ceci :
+
+````markdown
+```markdown
+# 🏠 ImmoSmart Dakar
+![Screenshot](./screenshots/image.png)
+```
+````
+
+**Résultat :** GitHub affiche TOUT en mode "code" au lieu d'interpréter le Markdown !
+
+**→ Les images ne s'affichent pas, tout est en texte brut.**
+
+---
+
+## ✅ Correction : README.md SANS les balises englobantes
+
+**Voici le README.md CORRECT (copie-colle intégral dans ton fichier) :**
 
 ```markdown
 # 🏠 ImmoSmart Dakar — Prototype Immobilier Premium
@@ -193,7 +249,7 @@ realestate-app-prototype/
 | **Cartographie** | Leaflet | 1.9.4 | Tuiles OpenStreetMap, marqueurs |
 | **Clustering** | Leaflet.markercluster | 1.5.3 | Regroupement automatique marqueurs |
 | **Graphiques** | Chart.js | 4.4.0 | Line chart dashboard (ventes) |
-| **CDN** | unpkg + jsDelivr | — | Chargement libs (defer, integrity hash) |
+| **CDN** | unpkg + jsDelivr | — | Chargement libs (defer) |
 
 ---
 
@@ -304,5 +360,6 @@ MIT License — Libre d'utilisation pour démonstration/apprentissage.
 
 ---
 
-**✨ Développé à Dakar | Intello © 2025**
+**✨ Conçu par Intello | © 2025**
 ```
+
