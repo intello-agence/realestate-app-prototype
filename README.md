@@ -1,57 +1,3 @@
-# 🎓 Explication Markdown : Code blocks vs Contenu
-
-**Excellent question !** Tu viens de découvrir un piège courant du Markdown. 🎯
-
----
-
-## 📘 Les balises ``` en Markdown
-
-### **Rôle des triple backticks (```)**
-
-Les ``` servent à afficher **du CODE** (pas du contenu normal).
-
-**Exemple :**
-
-````markdown
-Voici comment installer :
-
-```bash
-npm install
-git clone https://...
-```
-````
-
-**Résultat sur GitHub :**
-> Voici comment installer :
-> 
-> ```bash
-> npm install
-> git clone https://...
-> ```
-
-**→ Le texte entre ``` s'affiche avec coloration syntaxique, fond gris, police monospace.**
-
----
-
-## 🐛 Ton problème actuel
-
-**Quand je t'ai donné le README.md, j'ai fait UNE GROSSE ERREUR :**
-
-J'ai mis **TOUT LE CONTENU** dans un bloc ````markdown ... ````, comme ceci :
-
-````markdown
-```markdown
-# 🏠 ImmoSmart Dakar
-![Screenshot](./screenshots/image.png)
-```
-````
-
-**Résultat :** GitHub affiche TOUT en mode "code" au lieu d'interpréter le Markdown !
-
-**→ Les images ne s'affichent pas, tout est en texte brut.**
-
----
-
 ## ✅ Correction : README.md SANS les balises englobantes
 
 **Voici le README.md CORRECT (copie-colle intégral dans ton fichier) :**
@@ -142,7 +88,7 @@ ImmoSmart Dakar est une plateforme immobilière fictive présentant :
 - Leaflet avec `preferCanvas` (optimisation rendu)
 - CSS `will-change` sur animations
 
----
+```markdown
 
 ## 🖼️ Screenshots
 
