@@ -1,0 +1,656 @@
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║ IMMOSMART DAKAR — PROTOTYPE IMMOBILIER PREMIUM                               ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ Description : Application immobilière interactive pour Dakar                 ║
+║               • Vue client : recherche avancée, carte Leaflet, filtres       ║
+║               • Vue agent : dashboard KPIs, graphique ventes, top biens      ║
+║               • Modals : détail bien, comparateur, contact, galerie          ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ Auteur      : Patrick Junior Samba Ntadi (Intello)                           ║
+║ Date        : Janvier 2025                                                   ║
+║ Stack       : HTML5 + Vanilla JS + Leaflet 1.9.4 + Chart.js 4.4.0           ║
+║ Licence     : MIT (Projet de démonstration)                                  ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ Librairies externes :                                                        ║
+║  - Leaflet : cartographie interactive (OSM)                                  ║
+║  - Leaflet.markercluster : clustering des marqueurs                          ║
+║  - Chart.js : graphiques dashboard agent                                     ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ Note : Prototype non-indexable (noindex). Données fictives Dakar.            ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+-->
+<!doctype html>
+<html lang="fr">
+<head>
+  <!-- Encodage et viewport -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  
+  <!-- SEO Prototype (version light, non-indexé) -->
+  <title>ImmoSmart Dakar — Prototype immobilier premium | Intello</title>
+  <meta name="description" content="Démo recherche immobilière à Dakar : carte Leaflet interactive, filtres avancés (quartiers, prix, superficie), dashboard agent temps réel. Vanilla JS + Chart.js. Par Intello." />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="author" content="Patrick Junior Samba Ntadi - Intello" />
+  
+  <!-- Favicon (emoji SVG placeholder) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>" />
+  
+  <!-- Styles principaux -->
+  <link rel="stylesheet" href="./styles.css" />
+  
+  <!-- Leaflet : cartographie -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+
+  <!-- Leaflet MarkerCluster : clustering -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
+  <!-- Scripts (defer = téléchargement parallèle, exécution après DOM ready) -->
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       SKIP LINK (Accessibilité clavier)
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <a href="#mainContent" class="skip-link">Aller au contenu principal</a>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       HEADER : Navigation principale
+       • Brand + logo
+       • Boutons : Dashboard, Comparateur, Contact
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <header class="header" id="mainHeader">
+    <div class="container">
+      <div class="header-content">
+        
+        <!-- Brand -->
+        <div class="brand">
+          <div class="brand-icon" aria-hidden="true">🏠</div>
+          <div>
+            <div class="brand-name">ImmoSmart Dakar</div>
+            <div class="brand-sub">Immobilier premium au Sénégal</div>
+          </div>
+        </div>
+
+        <!-- Actions utilisateur -->
+        <div class="header-actions">
+          <!-- Bouton toggle dashboard agent -->
+          <button class="btn-icon" id="toggleDashboardBtn" aria-label="Basculer vers le tableau de bord agent">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+          </button>
+
+          <!-- Bouton comparateur (badge dynamique) -->
+          <button class="btn-icon" id="compareBtn" aria-label="Ouvrir le comparateur de biens">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            <span class="badge" id="compareCount" aria-live="polite">0</span>
+          </button>
+
+          <!-- Bouton contact principal -->
+          <button class="btn-primary" id="contactBtn">
+            <span aria-hidden="true">📞</span> Nous contacter
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       MAIN : Vue Client (recherche + carte + résultats)
+       • Hero : formulaire recherche + stats rapides
+       • Sidebar : filtres avancés (quartier, prix, superficie, chambres, commodités)
+       • Content : carte Leaflet + grille résultats
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <main class="main-content" id="clientView">
+    <div class="container">
+
+      <!-- ─────────────────────────────────────────────────────────────────
+           HERO : Recherche principale
+           ───────────────────────────────────────────────────────────────── -->
+      <section class="hero-search" aria-labelledby="heroTitle">
+        <div class="search-card fade-up">
+          <h1 class="search-title" id="heroTitle">
+            Trouvez votre bien <span class="gradient-text">idéal</span> à Dakar
+          </h1>
+          <p class="search-subtitle">
+            Villas, Appartements, Terrains • Almadies, Mermoz, VDN, Plateau
+          </p>
+
+          <!-- Formulaire recherche rapide -->
+          <form class="search-form" id="searchForm" role="search">
+            <div class="search-row">
+              <input 
+                type="text" 
+                id="searchQuery" 
+                name="query"
+                class="search-input" 
+                placeholder="Rechercher (ex: '3 chambres Almadies', 'villa piscine')" 
+                aria-label="Recherche par mots-clés"
+                autocomplete="off"
+              />
+              <select id="typeBien" name="type" class="search-select" aria-label="Type de bien">
+                <option value="">Tous types</option>
+                <option value="villa">Villa</option>
+                <option value="appartement">Appartement</option>
+                <option value="terrain">Terrain</option>
+                <option value="bureau">Bureau</option>
+              </select>
+              <select id="transaction" name="transaction" class="search-select" aria-label="Type de transaction">
+                <option value="">Achat ou Location</option>
+                <option value="vente">À vendre</option>
+                <option value="location">À louer</option>
+              </select>
+              <button type="submit" class="btn-primary">
+                <span aria-hidden="true">🔍</span> Rechercher
+              </button>
+            </div>
+          </form>
+
+          <!-- Stats rapides (données dynamiques JS) -->
+          <div class="quick-stats" role="region" aria-label="Statistiques rapides">
+            <div class="stat">
+              <span class="stat-value" id="statBiens">248</span>
+              <span class="stat-label">Biens disponibles</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">15</span>
+              <span class="stat-label">Quartiers couverts</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">+50%</span>
+              <span class="stat-label">Taux de satisfaction</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────────────────────────────────────────────────────────────
+           CONTENU PRINCIPAL : Filtres + Carte + Résultats
+           ───────────────────────────────────────────────────────────────── -->
+      <section class="content-grid">
+        
+        <!-- SIDEBAR : Filtres avancés -->
+        <aside class="filters-panel" id="filtersPanel" aria-labelledby="filtersTitle">
+          <div class="filters-header">
+            <h2 id="filtersTitle" class="h3">Filtres avancés</h2>
+            <button class="btn-text" id="resetFilters" aria-label="Réinitialiser tous les filtres">Réinitialiser</button>
+          </div>
+
+          <div class="filters-content">
+            
+            <!-- Filtre Quartier -->
+            <div class="filter-group">
+              <label for="quartierFilter" class="filter-label">
+                <span aria-hidden="true">📍</span> Quartier
+              </label>
+              <select id="quartierFilter" name="quartier" class="filter-select">
+                <option value="">Tous quartiers</option>
+                <option value="almadies">Almadies</option>
+                <option value="mermoz">Mermoz</option>
+                <option value="vdn">VDN</option>
+                <option value="plateau">Plateau</option>
+                <option value="sacre-coeur">Sacré-Cœur</option>
+                <option value="ouakam">Ouakam</option>
+                <option value="fann">Fann</option>
+                <option value="ngor">Ngor</option>
+                <option value="point-e">Point E</option>
+                <option value="hann">Hann Maristes</option>
+              </select>
+            </div>
+
+            <!-- Filtre Prix (FCFA) -->
+            <div class="filter-group">
+              <label class="filter-label">
+                <span aria-hidden="true">💰</span> Budget (FCFA)
+              </label>
+              <div class="range-inputs">
+                <input 
+                  type="number" 
+                  id="prixMin" 
+                  name="prixMin"
+                  placeholder="Min" 
+                  class="filter-input-half" 
+                  min="0"
+                  step="1000000"
+                  aria-label="Prix minimum en FCFA"
+                />
+                <input 
+                  type="number" 
+                  id="prixMax" 
+                  name="prixMax"
+                  placeholder="Max" 
+                  class="filter-input-half" 
+                  min="0"
+                  step="1000000"
+                  aria-label="Prix maximum en FCFA"
+                />
+              </div>
+            </div>
+
+            <!-- Filtre Superficie -->
+            <div class="filter-group">
+              <label class="filter-label">
+                <span aria-hidden="true">📏</span> Superficie (m²)
+              </label>
+              <div class="range-inputs">
+                <input 
+                  type="number" 
+                  id="superficieMin" 
+                  name="superficieMin"
+                  placeholder="Min" 
+                  class="filter-input-half" 
+                  min="0"
+                  step="10"
+                  aria-label="Superficie minimum en mètres carrés"
+                />
+                <input 
+                  type="number" 
+                  id="superficieMax" 
+                  name="superficieMax"
+                  placeholder="Max" 
+                  class="filter-input-half" 
+                  min="0"
+                  step="10"
+                  aria-label="Superficie maximum en mètres carrés"
+                />
+              </div>
+            </div>
+
+            <!-- Filtre Chambres -->
+            <div class="filter-group">
+              <label for="chambresFilter" class="filter-label">
+                <span aria-hidden="true">🛏️</span> Chambres
+              </label>
+              <select id="chambresFilter" name="chambres" class="filter-select">
+                <option value="">Indifférent</option>
+                <option value="1">1+</option>
+                <option value="2">2+</option>
+                <option value="3">3+</option>
+                <option value="4">4+</option>
+                <option value="5">5+</option>
+              </select>
+            </div>
+
+            <!-- Filtre Commodités (checkboxes) -->
+            <div class="filter-group">
+              <fieldset>
+                <legend class="filter-label">
+                  <span aria-hidden="true">✨</span> Commodités
+                </legend>
+                <div class="checkbox-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" value="piscine" class="commodity-checkbox" name="commodite" />
+                    <span>Piscine</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" value="jardin" class="commodity-checkbox" name="commodite" />
+                    <span>Jardin</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" value="parking" class="commodity-checkbox" name="commodite" />
+                    <span>Parking</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" value="securite" class="commodity-checkbox" name="commodite" />
+                    <span>Sécurité 24/7</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" value="climatisation" class="commodity-checkbox" name="commodite" />
+                    <span>Climatisation</span>
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+
+            <button class="btn-primary btn-block" id="applyFilters">
+              Appliquer les filtres
+            </button>
+          </div>
+        </aside>
+
+        <!-- ZONE PRINCIPALE : Carte + Résultats -->
+        <div class="main-area">
+          
+          <!-- Carte Leaflet interactive -->
+          <div class="map-card">
+            <div class="map-header">
+              <h2 class="h3">Carte interactive</h2>
+              <div class="map-controls">
+                <button class="btn-text" id="centerMapBtn" aria-label="Recentrer la carte sur Dakar">
+                  <span aria-hidden="true">📍</span> Recentrer
+                </button>
+                <button class="btn-text" id="toggleMapBtn" aria-label="Afficher la carte en plein écran">
+                  <span aria-hidden="true">🗺️</span> Plein écran
+                </button>
+              </div>
+            </div>
+            <div id="map" class="map-container" role="application" aria-label="Carte interactive des biens immobiliers"></div>
+          </div>
+
+          <!-- Grille résultats -->
+          <div class="results-card">
+            <div class="results-header">
+              <h2 class="h3">Résultats de recherche</h2>
+              <div class="results-meta">
+                <span id="resultsCount" aria-live="polite">0</span> biens trouvés
+              </div>
+              <label for="sortSelect" class="sr-only">Trier les résultats</label>
+              <select id="sortSelect" class="sort-select">
+                <option value="recent">Plus récents</option>
+                <option value="price-asc">Prix croissant</option>
+                <option value="price-desc">Prix décroissant</option>
+                <option value="superficie-desc">Superficie décroissante</option>
+              </select>
+            </div>
+
+            <div class="results-grid" id="resultsGrid" role="region" aria-live="polite" aria-atomic="false">
+              <!-- Rempli dynamiquement par app.js -->
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       DASHBOARD AGENT (caché par défaut, toggle via bouton header)
+       • KPIs : biens actifs, ventes mois, CA, visites
+       • Graphique Chart.js : évolution ventes 30j
+       • Top 5 biens (vues)
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <main class="dashboard-content hidden" id="dashboardView">
+    <div class="container">
+
+      <!-- Header Dashboard -->
+      <div class="dashboard-header">
+        <div>
+          <h1 class="dashboard-title">Dashboard Agent Immobilier</h1>
+          <p class="dashboard-subtitle">Vue d'ensemble des performances</p>
+        </div>
+        <button class="btn-outline" id="retourClientBtn" aria-label="Retourner à la vue client">
+          ← Retour vue client
+        </button>
+      </div>
+
+      <!-- KPIs Grid -->
+      <section class="kpis-grid" role="region" aria-labelledby="kpisTitle">
+        <h2 id="kpisTitle" class="sr-only">Indicateurs clés de performance</h2>
+        
+        <!-- KPI : Biens actifs -->
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <div class="kpi-icon" style="background: linear-gradient(135deg, #06b6d4, #0891b2)" aria-hidden="true">
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+              </svg>
+            </div>
+            <div class="kpi-title">Biens actifs</div>
+          </div>
+          <div class="kpi-value" id="biensActifs" aria-live="polite">0</div>
+          <div class="kpi-label">Total portefeuille</div>
+        </div>
+
+        <!-- KPI : Ventes mois -->
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <div class="kpi-icon" style="background: linear-gradient(135deg, #22c55e, #16a34a)" aria-hidden="true">
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div class="kpi-title">Ventes ce mois</div>
+          </div>
+          <div class="kpi-value" id="ventesMois" aria-live="polite">0</div>
+          <div class="kpi-label">Transactions conclues</div>
+        </div>
+
+        <!-- KPI : CA généré -->
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <div class="kpi-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706)" aria-hidden="true">
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div class="kpi-title">CA généré</div>
+          </div>
+          <div class="kpi-value" id="chiffreAffaires" aria-live="polite">0 M</div>
+          <div class="kpi-label">Ce mois (FCFA)</div>
+        </div>
+
+        <!-- KPI : Visites planifiées -->
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <div class="kpi-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed)" aria-hidden="true">
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+            </div>
+            <div class="kpi-title">Visites planifiées</div>
+          </div>
+          <div class="kpi-value" id="visitesCount" aria-live="polite">0</div>
+          <div class="kpi-label">Cette semaine</div>
+        </div>
+      </section>
+
+      <!-- Graphique + Top Biens -->
+      <section class="dashboard-grid">
+        
+        <!-- Graphique Chart.js -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h2 class="chart-title">Évolution ventes (30 jours)</h2>
+          </div>
+          <div class="chart-container">
+            <canvas id="ventesChart" role="img" aria-label="Graphique linéaire de l'évolution des ventes sur les 30 derniers jours"></canvas>
+          </div>
+        </div>
+
+        <!-- Top 5 biens par vues -->
+        <div class="data-card">
+          <div class="data-header">
+            <h2 class="data-title">Top 5 biens (vues)</h2>
+          </div>
+          <div class="top-biens-list" id="topBiensList" role="region" aria-live="polite">
+            <!-- Rempli dynamiquement par app.js -->
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       FOOTER
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-left">
+          <span class="footer-badge">Prototype</span>
+          <span class="footer-text">Données fictives • Design Intello</span>
+        </div>
+        <div class="footer-right">
+          <span class="footer-text">Conçu par Intello</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       MODALS
+       ═══════════════════════════════════════════════════════════════════════ -->
+
+  <!-- Modal : Détail d'un bien -->
+  <div id="bienModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="bienModalTitle" hidden>
+    <div class="modal-overlay" aria-hidden="true"></div>
+    <div class="modal-content modal-large">
+      <button class="modal-close" id="closeBienModal" aria-label="Fermer la fenêtre de détails">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+      <div class="modal-body" id="bienModalBody">
+        <!-- Rempli dynamiquement par app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal : Comparateur de biens -->
+  <div id="compareModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="compareModalTitle" hidden>
+    <div class="modal-overlay" aria-hidden="true"></div>
+    <div class="modal-content modal-large">
+      <div class="modal-header">
+        <h2 id="compareModalTitle" class="h3">Comparateur de biens</h2>
+        <button class="modal-close" id="closeCompareModal" aria-label="Fermer le comparateur">
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body" id="compareModalBody">
+        <!-- Rempli dynamiquement par app.js (max 3 biens) -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal : Formulaire contact/demande visite -->
+  <div id="contactModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="contactModalTitle" hidden>
+    <div class="modal-overlay" aria-hidden="true"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="contactModalTitle" class="h3">Demander une visite</h2>
+        <button class="modal-close" id="closeContactModal" aria-label="Fermer le formulaire de contact">
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="contactForm" class="contact-form" novalidate>
+          <input type="hidden" id="bienIdContact" name="bienId" />
+          
+          <label class="form-label">
+            <span><span aria-hidden="true">👤</span> Nom complet</span>
+            <input 
+              type="text" 
+              id="nomContact" 
+              name="nom"
+              class="form-input" 
+              required 
+              autocomplete="name"
+              aria-required="true"
+              minlength="2"
+              maxlength="100"
+            />
+          </label>
+
+          <label class="form-label">
+            <span><span aria-hidden="true">📧</span> Email</span>
+            <input 
+              type="email" 
+              id="emailContact" 
+              name="email"
+              class="form-input" 
+              required 
+              autocomplete="email"
+              aria-required="true"
+              pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+            />
+          </label>
+
+          <label class="form-label">
+            <span><span aria-hidden="true">📱</span> Téléphone</span>
+            <input 
+              type="tel" 
+              id="telContact" 
+              name="telephone"
+              class="form-input" 
+              placeholder="+221 77 123 45 67" 
+              required 
+              autocomplete="tel"
+              aria-required="true"
+              pattern="^\+?[0-9\s\-\(\)]{8,20}$"
+            />
+          </label>
+
+          <label class="form-label">
+            <span><span aria-hidden="true">📅</span> Date de visite souhaitée</span>
+            <input 
+              type="date" 
+              id="dateVisite" 
+              name="dateVisite"
+              class="form-input"
+              min=""
+            />
+          </label>
+
+          <label class="form-label">
+            <span><span aria-hidden="true">💬</span> Message (optionnel)</span>
+            <textarea 
+              id="messageContact" 
+              name="message"
+              class="form-textarea" 
+              rows="4" 
+              placeholder="Questions, préférences horaires..."
+              maxlength="500"
+            ></textarea>
+          </label>
+
+          <button type="submit" class="btn-primary btn-block">
+            <span aria-hidden="true">✉️</span> Envoyer la demande
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal : Galerie Lightbox -->
+  <div id="galleryModal" class="modal" role="dialog" aria-modal="true" aria-label="Galerie d'images" hidden>
+    <div class="modal-overlay" aria-hidden="true"></div>
+    <div class="modal-content modal-large modal-dark">
+      <button class="modal-close" id="closeGalleryModal" aria-label="Fermer la galerie">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+      <div class="gallery-container">
+        <button class="gallery-nav gallery-prev" id="galleryPrev" aria-label="Image précédente">
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        <img id="galleryImage" src="" alt="" class="gallery-image" />
+        <button class="gallery-nav gallery-next" id="galleryNext" aria-label="Image suivante">
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+        <div class="gallery-counter" id="galleryCounter" aria-live="polite">1 / 1</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       TOAST NOTIFICATIONS
+       Zone pour notifications toast (succès/erreur/info)
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <div id="toastContainer" class="toast-container" role="region" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       SCRIPT PRINCIPAL (chargé en dernier = non bloquant)
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <script src="./app.js"></script>
+</body>
+</html>

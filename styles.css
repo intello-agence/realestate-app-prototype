@@ -1,0 +1,1286 @@
+/*
+╔══════════════════════════════════════════════════════════════════════════════╗
+║ IMMOSMART DAKAR - STYLES.CSS                                                 ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ Description : Feuille de styles principale du prototype immobilier          ║
+║               • Design premium : glassmorphism, gradients, animations        ║
+║               • Responsive : 4 breakpoints (1100px, 900px, 768px, 540px)     ║
+║               • Accessibilité : skip link, focus visible, sr-only            ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ Auteur      : Patrick Junior Samba Ntadi (Intello)                           ║
+║ Date        : Janvier 2025                                                   ║
+║ Palette     : Dark theme (bg: #0a0f1a) + accents cyan/purple                ║
+║ Typographie : Inter (fallback: system-ui)                                    ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ Structure :                                                                  ║
+║  1. Variables CSS (couleurs, espacements)                                    ║
+║  2. Base & Reset                                                             ║
+║  3. Layout (container, grid, utilities)                                      ║
+║  4. Header & Navigation                                                      ║
+║  5. Hero & Search                                                            ║
+║  6. Filters & Main Content                                                   ║
+║  7. Dashboard Agent                                                          ║
+║  8. Modals & Overlays                                                        ║
+║  9. Toasts & Notifications                                                   ║
+║ 10. Accessibilité (skip-link, sr-only, focus-visible)                        ║
+║ 11. Animations                                                               ║
+║ 12. Responsive (media queries)                                               ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+*/
+
+/* ═══════════════════════════════════════════════════════════════════════
+   1. VARIABLES CSS
+   Centralisation de la palette pour maintenabilité
+   ═══════════════════════════════════════════════════════════════════════ */
+:root {
+  /* Couleurs de fond (dark theme) */
+  --bg-start: #0a0f1a;
+  --bg-end: #0b1220;
+  
+  /* Surfaces (glassmorphism avec alpha) */
+  --surface: rgba(255, 255, 255, 0.03);
+  --surface-2: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.08);
+  
+  /* Textes */
+  --text: #e6eef5;
+  --muted: #9aa3b2;
+  
+  /* Accents principaux */
+  --accent: #06b6d4;      /* Cyan (primary brand) */
+  --accent-2: #8b5cf6;    /* Purple (secondary) */
+  
+  /* États et feedback */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   2. BASE & RESET
+   Reset minimal + styles globaux
+   ═══════════════════════════════════════════════════════════════════════ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  /* Fond dégradé avec halos radials (effet depth) */
+  background: radial-gradient(1200px 800px at 10% -10%, rgba(6, 182, 212, 0.08), transparent 60%),
+    radial-gradient(1200px 800px at 90% 0%, rgba(139, 92, 246, 0.09), transparent 60%),
+    linear-gradient(180deg, var(--bg-start), var(--bg-end));
+  
+  color: var(--text);
+  font: 14px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   3. LAYOUT & UTILITIES
+   Container, spacing, helpers
+   ═══════════════════════════════════════════════════════════════════════ */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Icônes SVG */
+.icon {
+  width: 20px;
+  height: 20px;
+}
+.icon-sm {
+  width: 16px;
+  height: 16px;
+}
+
+/* Helpers */
+.hidden {
+  display: none !important;
+}
+
+/* Headings sémantiques (pour accessibilité sans casser design) */
+.h3 {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   4. HEADER & NAVIGATION
+   Sticky header avec glassmorphism + brand + actions
+   ═══════════════════════════════════════════════════════════════════════ */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10, 15, 26, 0.85);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  transition: background 0.3s ease;
+}
+
+.header-content {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Brand (logo + nom)
+   ───────────────────────────────────────────────────────────────── */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  font-size: 22px;
+  color: #001219;
+  background: linear-gradient(135deg, var(--accent), #0891b2);
+  box-shadow: 0 8px 18px rgba(6, 182, 212, 0.25);
+}
+
+.brand-name {
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 0.3px;
+}
+
+.brand-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Header actions (boutons dashboard, comparateur, contact)
+   ───────────────────────────────────────────────────────────────── */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-icon:hover {
+  background: var(--surface-2);
+  transform: translateY(-2px);
+  border-color: rgba(6, 182, 212, 0.3);
+}
+
+/* Badge notification (comparateur count) */
+.badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #001219;
+  background: linear-gradient(135deg, var(--accent), #0891b2);
+  box-shadow: 0 4px 10px rgba(6, 182, 212, 0.4);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Boutons principaux
+   ───────────────────────────────────────────────────────────────── */
+.btn-primary,
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #0891b2);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  color: #001219;
+  box-shadow: 0 8px 18px rgba(6, 182, 212, 0.2);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(6, 182, 212, 0.3);
+  filter: brightness(1.05);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid rgba(139, 92, 246, 0.4);
+  color: var(--accent-2);
+}
+
+.btn-outline:hover {
+  background: rgba(139, 92, 246, 0.1);
+  border-color: var(--accent-2);
+  transform: translateY(-2px);
+}
+
+/* Bouton texte (liens inline) */
+.btn-text {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.btn-text:hover {
+  opacity: 0.7;
+}
+
+/* Bouton full-width */
+.btn-block {
+  width: 100%;
+  justify-content: center;
+  padding: 14px;
+  border-radius: 12px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   5. HERO & SEARCH
+   Bannière recherche avec formulaire + stats rapides
+   ═══════════════════════════════════════════════════════════════════════ */
+.main-content,
+.dashboard-content {
+  padding: 32px 0 64px;
+}
+
+.hero-search {
+  padding: 40px 0 24px;
+}
+
+.search-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.28);
+}
+
+.search-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  margin-bottom: 10px;
+}
+
+/* Texte avec gradient (effet premium) */
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.search-subtitle {
+  font-size: 16px;
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Formulaire recherche rapide
+   ───────────────────────────────────────────────────────────────── */
+.search-form {
+  margin-bottom: 16px;
+}
+
+.search-row {
+  display: grid;
+  grid-template-columns: 1fr 200px 220px 160px;
+  gap: 10px;
+}
+
+.search-input,
+.search-select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.search-input:focus,
+.search-select:focus {
+  border-color: rgba(6, 182, 212, 0.4);
+  background: var(--surface-2);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Quick stats (3 indicateurs visuels)
+   ───────────────────────────────────────────────────────────────── */
+.quick-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.stat {
+  text-align: center;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--accent);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   6. FILTERS & MAIN CONTENT
+   Sidebar filtres + carte Leaflet + résultats
+   ═══════════════════════════════════════════════════════════════════════ */
+.content-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Sidebar filtres (sticky)
+   ───────────────────────────────────────────────────────────────── */
+.filters-panel {
+  position: sticky;
+  top: 96px; /* header height + margin */
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24);
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.filters-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-select,
+.filter-input-half {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.filter-select:focus,
+.filter-input-half:focus {
+  border-color: rgba(6, 182, 212, 0.4);
+}
+
+.range-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* Checkboxes commodités */
+.checkbox-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+}
+
+.checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.checkbox-label input {
+  accent-color: var(--accent);
+  width: 16px;
+  height: 16px;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Main area (carte + résultats)
+   ───────────────────────────────────────────────────────────────── */
+.main-area {
+  display: grid;
+  gap: 18px;
+}
+
+/* Carte Leaflet */
+.map-card,
+.results-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.28);
+}
+
+.map-header,
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.map-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.map-container {
+  width: 100%;
+  height: 420px;
+  min-height: 320px;
+  max-height: 560px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+/* Ajustement Leaflet (background dark) */
+.leaflet-container {
+  background: #0a0f1a;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 10px;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Résultats (grille de biens)
+   ───────────────────────────────────────────────────────────────── */
+.results-meta {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.sort-select {
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+/* Cartes bien individuel */
+.bien-card,
+.result-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.bien-card:hover,
+.result-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(6, 182, 212, 0.35);
+  box-shadow: 0 12px 28px rgba(6, 182, 212, 0.18);
+}
+
+.bien-thumb {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(139, 92, 246, 0.15));
+}
+
+.bien-body {
+  padding: 14px;
+}
+
+.bien-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bien-price {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--accent);
+}
+
+.bien-type {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.bien-meta {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.bien-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.tag {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(6, 182, 212, 0.12);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  color: var(--accent);
+}
+
+.bien-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.btn-pill {
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.btn-pill:hover {
+  background: var(--surface-2);
+  transform: translateY(-1px);
+}
+
+.btn-pill.primary {
+  background: linear-gradient(135deg, var(--accent), #0891b2);
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  color: #001219;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   7. DASHBOARD AGENT
+   KPIs + graphique Chart.js + top biens
+   ═══════════════════════════════════════════════════════════════════════ */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dashboard-title {
+  font-size: 26px;
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+
+.dashboard-subtitle {
+  color: var(--muted);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   KPIs grid (4 cartes indicateurs)
+   ───────────────────────────────────────────────────────────────── */
+.kpis-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+}
+
+.kpi-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.kpi-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #001219;
+}
+
+.kpi-title {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.kpi-value {
+  font-size: 30px;
+  font-weight: 900;
+  margin-top: 6px;
+}
+
+.kpi-label {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Dashboard grid (graphique + top biens)
+   ───────────────────────────────────────────────────────────────── */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 18px;
+}
+
+.chart-card,
+.data-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.28);
+}
+
+.chart-header,
+.data-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.chart-title,
+.data-title {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  min-height: 240px;
+  max-height: 360px;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Top 5 biens (liste)
+   ───────────────────────────────────────────────────────────────── */
+.top-biens-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.top-bien-item {
+  display: grid;
+  grid-template-columns: 72px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px;
+  background: var(--surface);
+}
+
+.top-thumb {
+  width: 72px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.top-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.top-title {
+  font-weight: 700;
+}
+
+.top-meta {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.top-views {
+  font-weight: 900;
+  color: var(--accent);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   8. MODALS & OVERLAYS
+   Fenêtres modales (détail bien, comparateur, contact, galerie)
+   ═══════════════════════════════════════════════════════════════════════ */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal.active,
+.modal.show {
+  display: flex;
+}
+
+.modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.modal-large {
+  max-width: 960px;
+}
+
+.modal-dark {
+  background: rgba(10, 15, 26, 0.92);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  cursor: pointer;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.modal-close:hover {
+  background: var(--surface-2);
+  transform: scale(1.1);
+}
+
+.modal-header {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-body {
+  padding: 18px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   FIX Z-INDEX : Leaflet ne doit pas masquer les modals
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* 
+  Leaflet utilise par défaut des z-index très élevés (400-1000).
+  On force tous les éléments Leaflet à rester sous les modals (z-index: 200)
+*/
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container,
+.leaflet-popup-pane,
+.leaflet-tooltip-pane,
+.leaflet-shadow-pane,
+.leaflet-overlay-pane,
+.leaflet-map-pane,
+.leaflet-control {
+  z-index: auto !important; /* Reset z-index Leaflet */
+}
+
+/* Leaflet container : rester sous header (100) et modals (200) */
+.leaflet-container {
+  position: relative;
+  z-index: 1; /* Bas niveau, sous tout le reste */
+}
+
+/* Leaflet popup : autoriser au-dessus de la carte mais sous modals */
+.leaflet-popup {
+  z-index: 50 !important; /* Au-dessus carte (1) mais sous header (100) et modals (200) */
+}
+
+/* Marker cluster : idem */
+.marker-cluster,
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+  z-index: 40 !important;
+}
+
+/* S'assurer que les modals restent au-dessus de TOUT */
+.modal {
+  z-index: 200 !important; /* Déjà défini, mais renforcer */
+}
+
+.modal-overlay {
+  z-index: 199 !important; /* Juste en dessous du contenu modal */
+}
+
+.modal-content {
+  z-index: 201 !important; /* Au-dessus de l'overlay */
+}
+
+/* Toast reste au top absolu */
+.toast-container {
+  z-index: 300 !important;
+}
+
+/* Header sticky : entre carte et modals */
+.header {
+  z-index: 100 !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Formulaire contact (dans modal)
+   ───────────────────────────────────────────────────────────────── */
+.contact-form {
+  display: grid;
+  gap: 12px;
+}
+
+.form-label {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: rgba(6, 182, 212, 0.4);
+  background: var(--surface-2);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Galerie lightbox (modal spécial)
+   ───────────────────────────────────────────────────────────────── */
+.gallery-container {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  min-height: 60vh;
+}
+
+.gallery-image {
+  max-width: 100%;
+  max-height: 70vh;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+.gallery-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  color: var(--text);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.gallery-nav:hover {
+  background: var(--surface-2);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.gallery-prev {
+  left: 12px;
+}
+
+.gallery-next {
+  right: 12px;
+}
+
+.gallery-counter {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.45);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   9. TOASTS & NOTIFICATIONS
+   Notifications temporaires (succès/erreur/info)
+   ═══════════════════════════════════════════════════════════════════════ */
+.toast-container {
+  position: fixed;
+  top: 90px; /* sous header */
+  right: 24px;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.toast {
+  min-width: 280px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.95), rgba(22, 163, 74, 0.95));
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  color: #001a0a;
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: 0 10px 24px rgba(34, 197, 94, 0.3);
+  animation: slideIn 0.3s ease;
+  will-change: transform, opacity; /* Performance hint */
+}
+
+.toast.error {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 0.95));
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #1a0404;
+  box-shadow: 0 10px 24px rgba(239, 68, 68, 0.3);
+}
+
+.toast.info {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.95), rgba(8, 145, 178, 0.95));
+  border-color: rgba(6, 182, 212, 0.4);
+  color: #001219;
+  box-shadow: 0 10px 24px rgba(6, 182, 212, 0.3);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   10. ACCESSIBILITÉ
+   Skip link, screen reader only, focus visible
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Skip link (navigation clavier) : caché par défaut, visible au focus */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  background: var(--accent);
+  color: #001219;
+  font-weight: 700;
+  border-radius: 0 0 12px 12px;
+  text-decoration: none;
+  z-index: 1000;
+  transition: top 0.3s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+
+/* Screen reader only (texte invisible visuellement mais lu par lecteurs d'écran) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Focus visible (outline personnalisé pour navigation clavier) */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Footer */
+.footer {
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+  background: rgba(10, 15, 26, 0.5);
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.footer-left,
+.footer-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer-badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(139, 92, 246, 0.2);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  color: var(--accent-2);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.footer-text {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   11. ANIMATIONS
+   Keyframes pour entrées/transitions
+   ═══════════════════════════════════════════════════════════════════════ */
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.6s ease forwards;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Performance : will-change sur modals actives */
+.modal.active {
+  will-change: opacity;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   12. RESPONSIVE (Mobile-first adjustments)
+   Breakpoints : 1100px, 900px, 768px, 540px
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Tablettes larges / petits laptops */
+@media (max-width: 1100px) {
+  .content-grid {
+    grid-template-columns: 280px 1fr;
+  }
+  .search-row {
+    grid-template-columns: 1fr 180px 200px 140px;
+  }
+}
+
+/* Tablettes */
+@media (max-width: 900px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+  .filters-panel {
+    position: relative;
+    top: 0;
+  }
+  .map-container {
+    height: 360px;
+  }
+}
+
+/* Mobile large */
+@media (max-width: 768px) {
+  .header-content {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 12px 0;
+  }
+  .search-row {
+    grid-template-columns: 1fr;
+  }
+  .quick-stats {
+    grid-template-columns: 1fr;
+  }
+  .kpis-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile petit */
+@media (max-width: 540px) {
+  .kpis-grid {
+    grid-template-columns: 1fr;
+  }
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+  }
+}
